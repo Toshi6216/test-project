@@ -1,5 +1,6 @@
 from django.db import models
 
+#日報モデル
 class NippoModel(models.Model):
     title = models.CharField(max_length=200)
     content = models.TextField()
@@ -9,12 +10,14 @@ class NippoModel(models.Model):
         return self.title
 
 
+#テスト用ブログモデル
 class Post(models.Model):
     title = models.CharField(max_length=100)
     
     def __str__(self):
         return self.title
 
+#テスト用コンテンツカード（タイトルと本文のセット）
 class ContentsCard(models.Model):
     subtitle = models.CharField(max_length=100)
     content = models.TextField()
