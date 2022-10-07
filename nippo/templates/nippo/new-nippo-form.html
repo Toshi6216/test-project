@@ -1,0 +1,11 @@
+{% extends "nippo/base.html" %}
+
+{% block title %}日報を作成しよう{% endblock %}
+
+{% block content %}
+    <form method="POST">{% csrf_token %}
+        <p>タイトル：{{ form.title }}</p>
+        <p>コンテンツ：{{ form.content }}</p>
+        <button type="submit">送信</button>
+    </form>
+{% endblock %}

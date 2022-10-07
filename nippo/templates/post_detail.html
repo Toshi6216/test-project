@@ -1,0 +1,22 @@
+{% extends 'nippo/base.html' %}
+
+{% block content %}
+
+<p>{{ post_data.title }}</p>
+<p>{{ post_data.category }}</p>
+<p>{{ post_data.created }}</p>
+    
+    <hr>
+
+    <!--本文とimgのセット-->
+    {% for card in post_data.contentscard.all %}
+        
+        <p>{{ card.subtitle }}</p>
+        <p>{{ card.content }}</p>
+    <hr>
+    {% endfor %}
+    <!--ここまで-->
+
+
+
+{% endblock %}

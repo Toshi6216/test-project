@@ -1,0 +1,28 @@
+{% extends "nippo/base.html" %}
+
+
+{% block content %}
+
+<div class="my-4">
+    <h2>投稿</h2>
+</div>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+        <div>
+            {{ form.as_p }}
+        </div>
+        <hr>
+        <div>
+            <p>###サブタイトルと本文###</p>
+            {{ formset.management_form }}
+            {% for card_form in formset  %}
+                {{ card_form.as_p }}
+            {% endfor %}
+        </div>
+        <hr>
+        <div>
+            <button type="submit">送信</button>
+        </div>
+    
+</form>
+{% endblock %}

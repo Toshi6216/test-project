@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+
+    <title>{% block title %}{% endblock %}</title>
+</head>
+<body>
+<div class="container">
+    {% block content %}
+    {% endblock %}
+    <a class="btn btn-primary" href="{% url "index" %}">index </a>
+    <a class="btn btn-primary" href="{% url 'form' %}">form </a>
+    <a class="btn btn-primary" href="{% url 'new_form' %}">new_form </a>
+    <a class="btn btn-primary" href="{% url 'blog-index' %}">blog-index </a>
+    <a class="btn btn-primary" href="{% url 'post_form' %}">post_form </a>
+    
+
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
+</body>
+</html>

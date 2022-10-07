@@ -1,0 +1,8 @@
+{% extends 'nippo/base.html' %}
+
+{% block title %}ラッキーナンバー{% endblock %}
+
+{% block content %}
+<h1>今日のラッキーナンバーは→　{{ random_int }}</h1>
+<p>入力した数値は→　{{ number }}</p>
+{% endblock %}

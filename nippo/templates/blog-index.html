@@ -1,0 +1,16 @@
+{% extends 'nippo/base.html' %}
+
+{% block content %}
+    {% for post in post_data %}
+        <p>{{ post.id }}</p>
+        <p>{{ post.title }}</p>
+        
+        <p>{{ post.contentscard.subtitle }}</p>
+         <div class="btn btn-warning m-2 btn-detail">
+         <a href="{% url 'post_detail' post.id %}" >詳細</a></div>   
+        <hr>    
+    {% endfor %}
+    </div>
+
+
+{% endblock %}
