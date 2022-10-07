@@ -90,7 +90,7 @@ class PostDetailView(View):
 class CreatePostView(View,LoginRequiredMixin):
     def get(self, request, *args, **kwargs):
         form = PostForm(request.POST or None)
-        formset = Formset()
+        formset = Formset(request.POST or None)
         context = {
             'form' : form,
             'formset' : formset
@@ -99,7 +99,7 @@ class CreatePostView(View,LoginRequiredMixin):
 
     def post(self, request, *args, **kwargs): #投稿内容をデータベースに保存
         form = PostForm(request.POST or None)
-        
+        context = {'form' : form }
         #フォームのバリデーション
         if form.is_valid():
             post = form.save(commit=False)
@@ -107,12 +107,11 @@ class CreatePostView(View,LoginRequiredMixin):
             if formset.is_valid():
                 post.save()
                 formset.save()
+                return redirect('blog-index')
+        else:
+            context['formset'] = formset
 
-            return redirect('blog-index')
-
-        return render(request, 'post_form.html',{
-            'form': form
-        })
+        return render(request, 'post_form.html', context)
     
 
         
