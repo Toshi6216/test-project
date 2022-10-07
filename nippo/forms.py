@@ -10,7 +10,10 @@ class NippoFormClass(forms.Form):
 
 #ブログ投稿フォーム
 class PostForm(forms.Form):
-    title = forms.CharField(max_length=30, label='タイトル')
+    
+    class Meta:
+        model = Post
+        fields = '__all__'
     
 #ブログ　インラインフォームセット
 Formset = forms.inlineformset_factory(

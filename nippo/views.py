@@ -67,8 +67,9 @@ def nippoDetailView(request, pk):
     ctx["object"] = q
     return render(request, template_name, ctx)
     
+#以下、お試し用
 
-
+#ブログの一覧
 class BlogIndexView(View):
     #このviewがコールされたら最初にget関数が呼ばれる
     def get(self, request, *args, **kwargs):
@@ -85,17 +86,19 @@ class PostDetailView(View):
             'post_data': post_data
         })
 
+#ブログ投稿
 class CreatePostView(View,LoginRequiredMixin):
     def get(self, request, *args, **kwargs):
-        form = Post(request.POST or None)
+        form = PostForm(request.POST or None)
+        formset = Formset()
         context = {
             'form' : form,
-            'formset' : Formset()
+            'formset' : formset
             }
         return render(request, 'post_form.html', context)
 
     def post(self, request, *args, **kwargs): #投稿内容をデータベースに保存
-        form = Post(request.POST or None)
+        form = PostForm(request.POST or None)
         
         #フォームのバリデーション
         if form.is_valid():
@@ -105,7 +108,7 @@ class CreatePostView(View,LoginRequiredMixin):
                 post.save()
                 formset.save()
 
-            return redirect('post_detail', post.id)
+            return redirect('blog-index')
 
         return render(request, 'post_form.html',{
             'form': form

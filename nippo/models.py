@@ -12,17 +12,17 @@ class NippoModel(models.Model):
 
 #テスト用ブログモデル
 class Post(models.Model):
-    title = models.CharField(max_length=100)
+    title = models.CharField('タイトル', max_length=100)
     
     def __str__(self):
         return self.title
 
 #テスト用コンテンツカード（タイトルと本文のセット）
 class ContentsCard(models.Model):
-    subtitle = models.CharField(max_length=100)
-    content = models.TextField()
+    subtitle = models.CharField('サブタイトル', max_length=100)
+    content = models.TextField('本文')
     post = models.ForeignKey(
-        Post,
+        Post, verbose_name = '紐づく記事',
         related_name = "contentscard",
         on_delete = models.CASCADE
     )
