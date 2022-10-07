@@ -46,16 +46,15 @@ def nippoCreateView(request):
 
 def new_nippoCreateView(request):
     template_name="nippo/new-nippo-form.html"
-
     form = NippoFormClass(request.POST or None)
     ctx = {'form':form}
-
+    print(ctx['form'])
     if form.is_valid():
         title = form.cleaned_data["title"]
         content = form.cleaned_data["content"]
         obj = NippoModel(title=title, content=content)
         obj.save()
-
+    print("test")
     return render(request, template_name, ctx)
 
     
@@ -87,14 +86,20 @@ class PostDetailView(View):
         })
 
 #ブログ投稿
-class CreatePostView(View,LoginRequiredMixin):
+class CreatePostView(CreateView,LoginRequiredMixin):
+
     def get(self, request, *args, **kwargs):
-        form = PostForm(request.POST or None)
+        form = PostForm(self.request.POST or None)
         formset = Formset(request.POST or None)
         context = {
             'form' : form,
             'formset' : formset
             }
+        print("get")
+        print('form:')
+        print(context["form"])
+        print('formset:')
+        print(context["formset"])
         return render(request, 'post_form.html', context)
 
     def post(self, request, *args, **kwargs): #投稿内容をデータベースに保存
@@ -102,8 +107,69 @@ class CreatePostView(View,LoginRequiredMixin):
         context = {'form' : form }
         #フォームのバリデーション
         if form.is_valid():
+            print("form is valid")
             post = form.save(commit=False)
             formset = Formset(request.POST, instance=post)
+            if formset.is_valid():
+                
+                print("formset is valid")
+                post.save()
+                formset.save()
+                print("saveしました")
+                
+                return redirect('blog-index')
+        else:
+            context['formset'] = formset
+        print("post done")
+        return render(request, 'post_form.html', context)
+
+"""
+class CreatePostView(View,LoginRequiredMixin):
+    template_name='post_form.html'
+    form_clas = PostForm
+    #def get(self, request, *args, **kwargs):
+    def get_context_data(self, **kwargs):
+        ctx = super(CreatePostView, self).get_context_data(**kwargs)
+        if self.request.method=="POST":
+            ctx["formset"] = Formset(self.request.POST)
+        else:
+            ctx["formset"] = Formset()
+        return ctx
+
+    def form_valid(self, form):
+        ctx = self.get_context_data()
+        formset = ctx["formset"]
+        if formset.is_valid():
+            self.object = form.save(commit=False)
+            self.object.title = self.request.title
+            self.object.save()
+
+            formset.instance = self.object
+            formset.save()
+
+            return redirect('blog-index')
+        else:
+            ctx["form"] = form
+            return render(ctx)
+"""
+
+"""
+        form = PostForm(self.request.POST or None)
+        formset = Formset(self.request.POST or None)
+
+        context = {
+            'form' : form,
+            'formset' : formset
+            }
+        return render(request, 'post_form.html', context)
+
+    def post(self, request, *args, **kwargs): #投稿内容をデータベースに保存
+        form = PostForm(self.request.POST or None)
+        context = {'form' : form }
+        #フォームのバリデーション
+        if form.is_valid():
+            post = form.save(commit=False)
+            formset = Formset(self.request.POST, instance=post)
             if formset.is_valid():
                 post.save()
                 formset.save()
@@ -112,7 +178,7 @@ class CreatePostView(View,LoginRequiredMixin):
             context['formset'] = formset
 
         return render(request, 'post_form.html', context)
-    
+"""
 
         
 
