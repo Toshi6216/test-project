@@ -1,6 +1,7 @@
 from django import forms
 from .models import *
 
+
 class NippoFormClass(forms.Form):
     title = forms.CharField()
     content = forms.CharField()
@@ -16,8 +17,8 @@ class PostForm(forms.Form):
         fields = '__all__'
     
 #ブログ　インラインフォームセット
-Formset = forms.inlineformset_factory(
+CardFormset = forms.inlineformset_factory(
     Post, ContentsCard, fields='__all__',
-    extra=1,  can_delete=True
+    extra=1,  can_delete=False
 )
 
