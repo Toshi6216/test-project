@@ -92,10 +92,8 @@ class CreatePostView(CreateView,LoginRequiredMixin):
     template_name='post_form.html'
     form_class = PostForm
     #queryset = Post.objects.all()
-    #queryset = ContentsCard.objects.all()
     #fields = '__all__'
     
-
     def get_success_url(self):
         return reverse("blog-index")
 
@@ -103,19 +101,29 @@ class CreatePostView(CreateView,LoginRequiredMixin):
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
 
+    #    if self.request.method=="POST":
+    #        ctx["blog_formset"] = CardFormset(self.request.POST)
+    #        print("ctx_formset POST:")  #ターミナル表示
+    #        print(ctx["blog_formset"])  #ターミナル表示
         if self.request.method=="POST":
-            ctx["blog_formset"] = CardFormset(self.request.POST)
-            print("ctx_formset POST")  #ターミナル表示
-            print(ctx["blog_formset"])  #ターミナル表示
+            post_formset = self.request.POST.copy()
+
+            post_formset['contentscard-TOTAL_FORMS'] = 1
+            post_formset['contentscard-INITIAL_FORMS'] = 0
+            
+            ctx["blog_formset"] = CardFormset(post_formset)
+
         else:
             ctx["blog_formset"] = CardFormset()
         return ctx
-    
 
     def form_valid(self, form):
-        print("form valid")   #ターミナル表示
+        
         ctx = self.get_context_data()
         blog_formset = ctx["blog_formset"]
+        print("blog_formset:")   #ターミナル表示
+        print(blog_formset)   #ターミナル表示
+        print(blog_formset.errors)  #ターミナル表示 追加
         if blog_formset.is_valid():
             #self.object = form.save(commit=False)
             #self.object.title = self.request.title
@@ -130,6 +138,7 @@ class CreatePostView(CreateView,LoginRequiredMixin):
         else:
             ctx["form"] = form
             print("render_to_response")  #ターミナル表示
+
             return self.render_to_response(ctx)
 
 
