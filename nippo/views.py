@@ -90,40 +90,48 @@ class PostDetailView(View):
 #ブログ投稿
 class CreatePostView(CreateView,LoginRequiredMixin):
     template_name='post_form.html'
-    #form_class = PostForm
-    queryset = Post.objects.all()
+    form_class = PostForm
+    #queryset = Post.objects.all()
     #queryset = ContentsCard.objects.all()
-    fields = '__all__'
+    #fields = '__all__'
     
+
     def get_success_url(self):
         return reverse("blog-index")
 
     #def get(self, request, *args, **kwargs):
     def get_context_data(self, **kwargs):
-        ctx = super(CreatePostView, self).get_context_data(**kwargs)
+        ctx = super().get_context_data(**kwargs)
 
         if self.request.method=="POST":
             ctx["blog_formset"] = CardFormset(self.request.POST)
+            print("ctx_formset POST")  #ターミナル表示
+            print(ctx["blog_formset"])  #ターミナル表示
         else:
             ctx["blog_formset"] = CardFormset()
         return ctx
     
 
     def form_valid(self, form):
+        print("form valid")   #ターミナル表示
         ctx = self.get_context_data()
         blog_formset = ctx["blog_formset"]
         if blog_formset.is_valid():
-            self.object = form.save(commit=False)
-            self.object.title = self.request.title
-            self.object.save()
+            #self.object = form.save(commit=False)
+            #self.object.title = self.request.title
+            print("form save")  #ターミナル表示
+            self.object=form.save()
 
             blog_formset.instance = self.object
+            print("formset save")  #ターミナル表示
             blog_formset.save()
 
-            return redirect('blog-index')
+            return redirect(self.get_success_url())
         else:
             ctx["form"] = form
+            print("render_to_response")  #ターミナル表示
             return self.render_to_response(ctx)
+
 
 
 #ブログ投稿
