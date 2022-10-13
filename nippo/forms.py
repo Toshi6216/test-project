@@ -10,7 +10,7 @@ class NippoFormClass(forms.Form):
 #以下、お試し用
 
 #ブログ投稿フォーム
-class PostForm(forms.Form):
+class PostForm(forms.ModelForm):
     
     class Meta:
         model = Post
