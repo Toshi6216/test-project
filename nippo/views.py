@@ -107,6 +107,7 @@ class CreatePostView(CreateView,LoginRequiredMixin):
     #        print(ctx["blog_formset"])  #ターミナル表示
         if self.request.method=="POST":
             post_formset = self.request.POST.copy()
+            
             post_formset['contentscard-TOTAL_FORMS'] = 1
             post_formset['contentscard-INITIAL_FORMS'] = 0
             ctx["blog_formset"] = CardFormset(post_formset)
