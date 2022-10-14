@@ -3,9 +3,7 @@
 {% block content %}
 
 <p>{{ post_data.title }}</p>
-<p>{{ post_data.category }}</p>
-<p>{{ post_data.created }}</p>
-    
+   
     <hr>
 
     <!--本文とimgのセット-->
@@ -13,6 +11,9 @@
         
         <p>{{ card.subtitle }}</p>
         <p>{{ card.content }}</p>
+        {% if card.image %}
+            <img src="{{ card.image.url }}" alt="" class="rounded detail-img">
+        {% endif %}
     <hr>
     {% endfor %}
     <!--ここまで-->

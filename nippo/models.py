@@ -26,6 +26,12 @@ class ContentsCard(models.Model):
         related_name = "contentscard",
         on_delete = models.CASCADE
     )
+    image = models.ImageField(
+        upload_to='images', 
+        verbose_name='イメージ画像', 
+        null=True,
+        blank=True
+    )
 
     def __str__(self):
         return self.subtitle

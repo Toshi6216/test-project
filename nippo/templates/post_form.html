@@ -6,7 +6,7 @@
 <div class="my-4">
     <h2>投稿</h2>
 </div>
-<form method="POST">
+<form method="POST" enctype="multipart/form-data">
     {% csrf_token %}
     {{ formset.management_form }}
         <div>

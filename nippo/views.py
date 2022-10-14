@@ -107,10 +107,8 @@ class CreatePostView(CreateView,LoginRequiredMixin):
     #        print(ctx["blog_formset"])  #ターミナル表示
         if self.request.method=="POST":
             post_formset = self.request.POST.copy()
-
             post_formset['contentscard-TOTAL_FORMS'] = 1
             post_formset['contentscard-INITIAL_FORMS'] = 0
-            
             ctx["blog_formset"] = CardFormset(post_formset)
 
         else:
@@ -125,12 +123,12 @@ class CreatePostView(CreateView,LoginRequiredMixin):
         print(blog_formset)   #ターミナル表示
         print(blog_formset.errors)  #ターミナル表示 追加
         if blog_formset.is_valid():
-            #self.object = form.save(commit=False)
-            #self.object.title = self.request.title
+
             print("form save")  #ターミナル表示
             self.object=form.save()
 
             blog_formset.instance = self.object
+            
             print("formset save")  #ターミナル表示
             blog_formset.save()
 
