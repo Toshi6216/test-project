@@ -142,7 +142,7 @@ class CreatePostView(CreateView,LoginRequiredMixin):
             
             self.object=form.save(commit=False)
             self.object.author=self.request.user
-            print(self.object.title.id)
+            
             self.object.save()
             blog_formset.instance = self.object
             blog_formset.save()
