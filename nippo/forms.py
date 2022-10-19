@@ -17,7 +17,6 @@ class PostForm(forms.ModelForm):
         fields = '__all__'
     
 class ContentsCardForm(forms.ModelForm):  #コンテンツカードのフォーム追加
-
     class Meta:
         model = ContentsCard
         fields = '__all__'

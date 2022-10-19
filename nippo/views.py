@@ -86,31 +86,48 @@ class PostDetailView(View):
             'post_data': post_data
         })
 
- 
+FORM_NUM = 1 #フォーム数
+FORM_VALUES = {} #前回のPOST時のフォーム情報を格納
 #ブログ投稿
 class CreatePostView(CreateView,LoginRequiredMixin):
     template_name='post_form.html'
     form_class = PostForm
-    #queryset = Post.objects.all()
-    #fields = '__all__'
+    
     
     def get_success_url(self):
         return reverse("blog-index")
+        
+    def get_form_kwargs(self):
+        # デフォルトのget_form_kwargsメソッドを呼び出す
+        kwargs = super().get_form_kwargs()
+        # FORM_VALUESが空でない場合（入力中のフォームがある場合）、dataキーにFORM_VALUESを設定
+        if FORM_VALUES:
+            kwargs['data'] = FORM_VALUES
+        return kwargs
 
-    #def get(self, request, *args, **kwargs):
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
+        global FORM_NUM
+     #   global FORM_VALUES
+        # 追加ボタンが押された時の挙動
+        
 
-    #    if self.request.method=="POST":
-    #        ctx["blog_formset"] = CardFormset(self.request.POST)
-    #        print("ctx_formset POST:")  #ターミナル表示
-    #        print(ctx["blog_formset"])  #ターミナル表示
         if self.request.method=="POST":
-            post_formset = self.request.POST.copy()
-            
-            post_formset['contentscard-TOTAL_FORMS'] = 1
-            post_formset['contentscard-INITIAL_FORMS'] = 0
-            ctx["blog_formset"] = CardFormset(post_formset)
+            if "btn_submit" in self.request.POST:
+                post_formset = self.request.POST.copy()
+                files= self.request.FILES
+               # post_formset['contentscard-TOTAL_FORMS'] = 1
+                post_formset['contentscard-TOTAL_FORMS'] = FORM_NUM
+                post_formset['contentscard-INITIAL_FORMS'] = 0
+                ctx["blog_formset"] = CardFormset(post_formset,files)
+
+            if "btn_add" in self.request.POST:
+                FORM_NUM += 1    # フォーム数をインクリメント
+            #    FORM_VALUES = self.request.POST.copy()  # リクエストの内容をコピー
+                
+                FORM_VALUES['contentscard-TOTAL_FORMS'] = FORM_NUM   # フォーム数を上書き
+                ctx["blog_formset"] = CardFormset(FORM_VALUES)
+            return ctx
 
         else:
             ctx["blog_formset"] = CardFormset()
@@ -120,87 +137,22 @@ class CreatePostView(CreateView,LoginRequiredMixin):
         
         ctx = self.get_context_data()
         blog_formset = ctx["blog_formset"]
-        print("blog_formset:")   #ターミナル表示
-        print(blog_formset)   #ターミナル表示
-        print(blog_formset.errors)  #ターミナル表示 追加
+        
         if blog_formset.is_valid():
-
-            print("form save")  #ターミナル表示
-            self.object=form.save()
-
-            blog_formset.instance = self.object
             
-            print("formset save")  #ターミナル表示
+            self.object=form.save(commit=False)
+            self.object.author=self.request.user
+            print(self.object.title.id)
+            self.object.save()
+            blog_formset.instance = self.object
             blog_formset.save()
 
             return redirect(self.get_success_url())
         else:
             ctx["form"] = form
-            print("render_to_response")  #ターミナル表示
-
             return self.render_to_response(ctx)
 
 
-
-#ブログ投稿
-#class CreatePostView(CreateView,LoginRequiredMixin):
-#    template_name = "post_form.html"
-#    form_clas = PostForm
-#    def get_success_url(self):
-#        return reverse("post_detail", kwargs={"pk": self.object.id})
-
-#    def get_context_data(self, **kwargs):
-#        ctx = super(CreatePostView, self).get_context_data(**kwargs)
-#        if self.request.method == "POST":
-#            ctx["formset"] = FormSet(self.request.POST, self.request.FILES)
-#        else:
-#            ctx["formset"] = FormSet()
-#        return ctx
-
-#    def form_valid(self, form):
-#        ctx = self.get_context_data()
-#        formset = ctx["formset"]
-#        if formset.is_valid():
-#            self.object = form.save(commit=False)
-#            self.object.user = self.request.user
-#            self.object.save()
-
-            # FormSet の内容を保存
- #           formset.instance = self.object
- #           formset.save()
-
- #           return redirect(self.get_redirect_url())
- #       else:
- #           ctx["form"] = form
- #           return self.render_to_response(ctx)
-
- #   def get(self, request, *args, **kwargs):
- #       form = PostForm(request.POST or None)
- #       post_formset = Formset(request.POST or None)
- #       context = {
- #           'form' : form,
- #           'post_formset' : post_formset
- #           }
-        
-        #return render(request, 'post_form.html', context)
- #       return super().form_valid(form)
-
-#    def post(self, request, *args, **kwargs): #投稿内容をデータベースに保存
-#        form = PostForm(request.POST or None)
-#        context = {'form' : form }
-        #フォームのバリデーション
-#        if form.is_valid():
-#            post = form.save(commit=False)
-#            post_formset = Formset(request.POST, instance=post)
-#            if post_formset.is_valid():
-                
-#                post.save()
-#                post_formset.save()
-               
-#                return redirect('blog-index')
-#        else:
-#            context['post_formset'] = post_formset
-#        return render(request, 'post_form.html', context)
 
 
 
