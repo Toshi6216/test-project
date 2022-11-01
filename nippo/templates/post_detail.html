@@ -18,6 +18,8 @@
     {% endfor %}
     <!--ここまで-->
 
-
+        <div class="btn btn-warning m-2 btn-detail">
+         <a href="{% url 'post_edit' post_data.id %}" >編集</a>
+        </div>
 
 {% endblock %}

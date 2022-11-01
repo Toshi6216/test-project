@@ -9,21 +9,18 @@
 <form method="POST" enctype="multipart/form-data">
     {% csrf_token %}
     {{ formset.management_form }}
-    {{ form.management_form }}
         <div>
         <p>###タイトル###</p>
         
             {{ form.as_p }}
-            {{ blog_formset.as_p }}
         </div>
         <hr>
         <div>
             <p>###サブタイトルと本文###</p>
-            <!--
+            
             {% for card_form in blog_formset  %}
                 {{ card_form.as_p }}
             {% endfor %}
-            -->
         </div>
         <hr>
         <div>

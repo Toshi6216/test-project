@@ -73,6 +73,8 @@ def nippoDetailView(request, pk):
 class BlogIndexView(View):
     #このviewがコールされたら最初にget関数が呼ばれる
     def get(self, request, *args, **kwargs):
+        global FORM_NUM
+        FORM_NUM=1
         post_data = Post.objects.order_by('-id') #新しいものから順番に並べる
         return render(request, 'blog-index.html',{
             'post_data': post_data
@@ -93,41 +95,109 @@ class CreatePostView(CreateView,LoginRequiredMixin):
     template_name='post_form.html'
     form_class = PostForm
     
-    
     def get_success_url(self):
         return reverse("blog-index")
         
-    def get_form_kwargs(self):
+   # def get_form_kwargs(self):
         # デフォルトのget_form_kwargsメソッドを呼び出す
-        kwargs = super().get_form_kwargs()
+   #     kwargs = super().get_form_kwargs()
         # FORM_VALUESが空でない場合（入力中のフォームがある場合）、dataキーにFORM_VALUESを設定
-        if FORM_VALUES:
-            kwargs['data'] = FORM_VALUES
-        return kwargs
+   #     if FORM_VALUES:
+   #         kwargs['data'] = FORM_VALUES
+   #     return kwargs
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
+        print("ctx=super")
+        print(ctx)
+        print('最初　ctx["form"]')
+        print(ctx["form"])
         global FORM_NUM
      #   global FORM_VALUES
         # 追加ボタンが押された時の挙動
-        
 
         if self.request.method=="POST":
+            print("if self.request.method=='POST'")
+            print(self.request)
+            
             if "btn_submit" in self.request.POST:
                 post_formset = self.request.POST.copy()
                 files= self.request.FILES
                # post_formset['contentscard-TOTAL_FORMS'] = 1
                 post_formset['contentscard-TOTAL_FORMS'] = FORM_NUM
                 post_formset['contentscard-INITIAL_FORMS'] = 0
+                
                 ctx["blog_formset"] = CardFormset(post_formset,files)
-
+                print('ctx["blog_formset"]')
+                print(ctx["blog_formset"])
+                return ctx
+                
             if "btn_add" in self.request.POST:
                 FORM_NUM += 1    # フォーム数をインクリメント
-            #    FORM_VALUES = self.request.POST.copy()  # リクエストの内容をコピー
-                
+            #    FORM_VALUES = self.request.POST.copy()  # リクエストの内容をコピー  
                 FORM_VALUES['contentscard-TOTAL_FORMS'] = FORM_NUM   # フォーム数を上書き
                 ctx["blog_formset"] = CardFormset(FORM_VALUES)
-            return ctx
+                
+            
+
+        else:
+            ctx["blog_formset"] = CardFormset()
+            print("ctx['blog_formset'] = CardFormset()")
+            print(ctx["blog_formset"])
+            print("ctx[form]")
+            print(ctx["form"])
+        print("return")
+        print(ctx)
+        
+        return ctx
+
+    def form_valid(self, form):
+        print("valid form")
+        print(form)
+        
+        ctx = self.get_context_data()
+        blog_formset = ctx["blog_formset"]
+        print("get ctx")
+        print(ctx)
+        if blog_formset.is_valid():
+            self.object=form.save(commit=False)
+            self.object.author=self.request.user
+            
+            self.object.save()
+            print("self.object.save　後")
+            print(self.object)
+            blog_formset.instance = self.object
+            print("blog_formset")
+            print(blog_formset)
+            blog_formset.save()
+
+            return redirect(self.get_success_url())
+        else:
+            ctx["form"] = form
+            return self.render_to_response(ctx)
+
+
+#編集画面のview
+class PostEditView(CreateView,LoginRequiredMixin):
+    template_name='post_form.html'
+    form_class = PostForm
+    
+    
+    def get_success_url(self):
+        return reverse("blog-index")
+        
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        
+        if self.request.method=="POST":
+
+            post_formset = self.request.POST.copy()
+            files= self.request.FILES
+
+            post_formset['contentscard-TOTAL_FORMS'] = 1
+            post_formset['contentscard-INITIAL_FORMS'] = 0
+            
+            ctx["blog_formset"] = CardFormset(post_formset,files)
 
         else:
             ctx["blog_formset"] = CardFormset()
@@ -139,7 +209,6 @@ class CreatePostView(CreateView,LoginRequiredMixin):
         blog_formset = ctx["blog_formset"]
         
         if blog_formset.is_valid():
-            
             self.object=form.save(commit=False)
             self.object.author=self.request.user
             
@@ -151,9 +220,7 @@ class CreatePostView(CreateView,LoginRequiredMixin):
         else:
             ctx["form"] = form
             return self.render_to_response(ctx)
-
-
-
+    
 
 
 

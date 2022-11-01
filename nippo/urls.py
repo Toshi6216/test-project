@@ -13,8 +13,6 @@ urlpatterns = [
 #以下、お試し用ページ
     path('post/', BlogIndexView.as_view(), name="blog-index"),
     path('post/<int:pk>/detail/', PostDetailView.as_view(), name='post_detail'),
-    
-    #　↓　ブログ投稿用ページ
-    path('post/new/', CreatePostView.as_view(), name='post_form'),
-    
+    path('post/new/', CreatePostView.as_view(), name='post_form'),#ブログ投稿用ページ
+    path('post/<int:pk>/edit/', PostEditView.as_view(), name='post_edit'),
 ]
